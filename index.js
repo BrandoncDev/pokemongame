@@ -2,11 +2,45 @@ const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d')
 canvas.width = 1024;
 canvas.height = 576;
-console.log(c);
+console.log(collisons);
 
-c.fillStyle = "white";
-c.fillRect(0, 0, canvas.width, canvas.height);
+const collsionsmap = []
+for (let i = 0; i < collisons.length; i += 70){
+    collsionsmap.push(collisons.slice(i, 70 + i))
+    
+}
+console.log(collsionsmap)
+const offset = {
+    x: -1175,
+    y: -570
+}
 
+class Boundry {
+    constructor({position}){
+        this.position = position
+        this.width = 48
+        this.height = 48
+    }
+
+    draw(){
+        c.fillStyle = 'red'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height)
+    }
+}
+const boundaries = []
+
+// 48 is Boundry width * 4
+collsionsmap.forEach((row, i) =>{
+    row.forEach((Symbol, j) =>{
+        if( Symbol === 1025){
+        boundaries.push(new Boundry({position:{
+            x: j * 48 + offset.x,
+            y: i * 48 + offset.y
+        }}))
+}})
+})
+
+console.log(boundaries)
 // sprite and map 
 const image = new Image();
 image.src = './img/map.png';
@@ -25,9 +59,11 @@ class Sprite {
     }
 }
 
+
+
 const background = new Sprite({position: {
-    x: -1175,
-    y: -570
+    x: offset.x,
+    y: offset.y
 },
     image: image
 })
@@ -54,6 +90,9 @@ const keys = {
 function animate(){
     window.requestAnimationFrame(animate)
     background.draw()
+    boundaries.forEach(Boundry =>{
+        Boundry.draw()
+    })
     c.drawImage(PlayerImage, 0, 0, PlayerImage.width / 4, PlayerImage.height, 
     canvas.width / 2 - PlayerImage.width, canvas.height / 2,
     PlayerImage.width / 4, PlayerImage.height);
@@ -63,6 +102,7 @@ function animate(){
     else if(keys.s.pressed && lastkey === 's') background.position.y = background.position.y -= 3
     else if(keys.d.pressed && lastkey === 'd') background.position.x = background.position.x -= 3
 
+    
     
 }
 animate()
